@@ -2,6 +2,20 @@ import React, { useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
+const KanbanBoard = ({ children }) => (
+  <main className="kanban-board">{children}</main>
+);
+
+const KanbanColumn = ({ children, className, title }) => {
+  const combinedClassName = `kanban-column ${className}`;
+  return (
+    <section className={combinedClassName}>
+      <h2>{title}</h2>
+      <ul>{children}</ul>
+    </section>
+  );
+};
+
 const KanbanCard = ({ title, status }) => {
   return (
     <li className="kanban-card">
@@ -73,38 +87,35 @@ function App() {
         <h1>我的看板</h1>
         <img src={logo} className="App-logo" alt="logo" />
       </header>
-      <main className="kanban-board">
-        <section className="kanban-column column-todo">
-          <h2>
-            待处理
-            <button onClick={handleAdd} disabled={showAdd}>
-              &#8853; 添加新卡片
-            </button>
-          </h2>
-          <ul>
-            {showAdd && <KanbanNewCard onSubmit={handleSubmit} />}
-            {todoList.map((props) => (
-              <KanbanCard {...props} />
-            ))}
-          </ul>
-        </section>
-        <section className="kanban-column column-ongoing">
-          <h2>进行中</h2>
-          <ul>
-            {ongoingList.map((props) => (
-              <KanbanCard {...props} />
-            ))}
-          </ul>
-        </section>
-        <section className="kanban-column column-done">
-          <h2>已完成</h2>
-          <ul>
-            {doneList.map((props) => (
-              <KanbanCard {...props} />
-            ))}
-          </ul>
-        </section>
-      </main>
+      <KanbanBoard>
+        <KanbanColumn
+          className="column-todo"
+          title={
+            <>
+              {" "}
+              待处理
+              <button onClick={handleAdd} disabled={showAdd}>
+                &#8853; 添加新卡片
+              </button>{" "}
+            </>
+          }
+        >
+          {showAdd && <KanbanNewCard onSubmit={handleSubmit} />}
+          {todoList.map((props) => (
+            <KanbanCard {...props} />
+          ))}
+        </KanbanColumn>
+        <KanbanColumn className="column-ongoing" title="进行中">
+          {ongoingList.map((props) => (
+            <KanbanCard {...props} />
+          ))}
+        </KanbanColumn>
+        <KanbanColumn className="column-done" title="已完成">
+          {doneList.map((props) => (
+            <KanbanCard {...props} />
+          ))}
+        </KanbanColumn>
+      </KanbanBoard>
     </div>
   );
 }
