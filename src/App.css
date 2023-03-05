@@ -31,6 +31,15 @@
   color: white;
 }
 
+.App-header > h1 > * {
+  margin-left: 1rem;
+}
+
+.App-header > h1 > label {
+  font-size: initial;
+  font-weight: initial;
+}
+
 .App-link {
   color: #61dafb;
 }

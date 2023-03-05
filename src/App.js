@@ -7,6 +7,7 @@ import KanbanBoard, {
   COLUMN_KEY_ONGOING,
   COLUMN_KEY_TODO,
 } from "./KanbanBoard";
+import AdminContext from "./context/AdminContext";
 
 const DATA_STORE_KEY = "kanban-data-store";
 
@@ -27,11 +28,16 @@ function App() {
     { title: "测试任务-1", status: "2023-03-01 18:15" },
   ]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const updaters = {
     [COLUMN_KEY_TODO]: setTodoList,
     [COLUMN_KEY_ONGOING]: setOngoingList,
     [COLUMN_KEY_DONE]: setDoneList,
+  };
+
+  const handleToggleAdmin = (evt) => {
+    setIsAdmin(!isAdmin);
   };
 
   const handleAdd = (column, newCard) => {
@@ -40,7 +46,7 @@ function App() {
 
   const handleRemove = (column, cardToRemove) => {
     updaters[column]((currentStat) =>
-      currentStat.filter((item) => !Object.is(item, cardToRemove))
+      currentStat.filter((item) => item.title !== cardToRemove.title)
     );
   };
 
@@ -70,17 +76,27 @@ function App() {
       <header className="App-header">
         <h1>
           我的看板 <button onClick={handleSaveAll}>保存所有卡片</button>
+          <label>
+            <input
+              type="checkbox"
+              value={isAdmin}
+              onChange={handleToggleAdmin}
+            />
+            管理员模式
+          </label>
         </h1>
         <img src={logo} className="App-logo" alt="logo" />
       </header>
-      <KanbanBoard
-        isLoading={isLoading}
-        todoList={todoList}
-        ongoingList={ongoingList}
-        doneList={doneList}
-        onAdd={handleAdd}
-        onRemove={handleRemove}
-      />
+      <AdminContext.Provider value={isAdmin}>
+        <KanbanBoard
+          isLoading={isLoading}
+          todoList={todoList}
+          ongoingList={ongoingList}
+          doneList={doneList}
+          onAdd={handleAdd}
+          onRemove={handleRemove}
+        />
+      </AdminContext.Provider>
     </div>
   );
 }

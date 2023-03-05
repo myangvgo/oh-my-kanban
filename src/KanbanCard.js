@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { css } from "@emotion/react";
+import AdminContext from "./context/AdminContext";
 
 export const kanbanCardStyles = css`
   margin-bottom: 1rem;
@@ -31,8 +32,10 @@ const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 const UPDATE_INTERVAL = MINUTE;
 
-export default function KanbanCard({ title, status, onDragStart }) {
+export default function KanbanCard({ title, status, onDragStart, onRemove }) {
   const [displayTime, setDisplayTime] = useState(status);
+
+  const isAdmin = useContext(AdminContext);
 
   useEffect(() => {
     const updateDisplayTime = () => {
@@ -63,7 +66,10 @@ export default function KanbanCard({ title, status, onDragStart }) {
     <li css={kanbanCardStyles} draggable onDragStart={handleDragStart}>
       <div css={kanbanCardTitleStyles}>{title}</div>
       <div css={kanbanCardStatusStyles} title={status}>
-        {displayTime}
+        {displayTime}{" "}
+        {isAdmin && onRemove && (
+          <button onClick={() => onRemove({ title })}>X</button>
+        )}
       </div>
     </li>
   );
