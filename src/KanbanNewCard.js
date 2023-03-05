@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React, { useEffect, useRef, useState } from "react";
 import { css } from "@emotion/react";
-import { kanbanCardStyles, kanbanCardTitleStyles } from './KanbanCard';
+import { kanbanCardStyles, kanbanCardTitleStyles } from "./KanbanCard";
 
 export default function KanbanNewCard({ onSubmit }) {
   const [title, setTitle] = useState("");
@@ -10,7 +10,8 @@ export default function KanbanNewCard({ onSubmit }) {
   };
   const handleKeyDown = (evt) => {
     if (evt.key === "Enter") {
-      onSubmit(title);
+      const newCard = { title, status: new Date().toString() };
+      onSubmit(newCard);
     }
   };
   const inputElem = useRef(null);
