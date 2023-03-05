@@ -4,8 +4,6 @@ import logo from "./logo.svg";
 import "./App.css";
 import KanbanBoard from "./KanbanBoard";
 import KanbanColumn from "./KanbanColumn";
-import KanbanCard from "./KanbanCard";
-import KanbanNewCard from "./KanbanNewCard";
 
 const COLUMN_BG_COLORS = {
   loading: "#E3E3E3",
@@ -20,7 +18,6 @@ const COLUMN_KEY_ONGOING = "ongoing";
 const COLUMN_KEY_DONE = "done";
 
 function App() {
-  const [showAdd, setShowAdd] = useState(false);
   const [todoList, setTodoList] = useState([
     { title: "开发任务-1", status: "2023-03-01 18:15" },
     { title: "开发任务-3", status: "2023-03-01 18:15" },
@@ -37,18 +34,8 @@ function App() {
     { title: "测试任务-1", status: "2023-03-01 18:15" },
   ]);
   const [isLoading, setIsLoading] = useState(true);
-  const handleAdd = (evt) => {
-    setShowAdd(true);
-  };
-  const handleSubmit = (title) => {
-    setTodoList((currentTodoList) => [
-      {
-        title,
-        status: new Date().toDateString(),
-      },
-      ...currentTodoList,
-    ]);
-    setShowAdd(false);
+  const handleAdd = (newCard) => {
+    setTodoList((currentTodoList) => [newCard, ...currentTodoList]);
   };
   const handleSaveAll = () => {
     const data = JSON.stringify({
@@ -116,35 +103,24 @@ function App() {
         ) : (
           <>
             <KanbanColumn
+              canAddNew
               bgColor={COLUMN_BG_COLORS.todo}
-              title={
-                <>
-                  待处理
-                  <button onClick={handleAdd} disabled={showAdd}>
-                    &#8853; 添加新卡片
-                  </button>{" "}
-                </>
-              }
+              title="待处理"
+              setDraggedItem={setDraggedItem}
               setIsDragSource={(isDragSource) =>
                 setDragSource(isDragSource ? COLUMN_KEY_TODO : null)
               }
               setIsDragTarget={(isDragTarget) =>
                 setDragTarget(isDragTarget ? COLUMN_KEY_TODO : null)
               }
+              onAdd={handleAdd}
               onDrop={handleDrop}
-            >
-              {showAdd && <KanbanNewCard onSubmit={handleSubmit} />}
-              {todoList.map((props) => (
-                <KanbanCard
-                  key={props.title}
-                  onDragStart={() => setDraggedItem(props)}
-                  {...props}
-                />
-              ))}
-            </KanbanColumn>
+              cardList={todoList}
+            ></KanbanColumn>
             <KanbanColumn
               bgColor={COLUMN_BG_COLORS.ongoing}
               title="进行中"
+              setDraggedItem={setDraggedItem}
               setIsDragSource={(isDragSource) =>
                 setDragSource(isDragSource ? COLUMN_KEY_ONGOING : null)
               }
@@ -152,18 +128,12 @@ function App() {
                 setDragTarget(isDragTarget ? COLUMN_KEY_ONGOING : null)
               }
               onDrop={handleDrop}
-            >
-              {ongoingList.map((props) => (
-                <KanbanCard
-                  key={props.title}
-                  onDragStart={() => setDraggedItem(props)}
-                  {...props}
-                />
-              ))}
-            </KanbanColumn>
+              cardList={ongoingList}
+            ></KanbanColumn>
             <KanbanColumn
               bgColor={COLUMN_BG_COLORS.done}
               title="已完成"
+              setDraggedItem={setDraggedItem}
               setIsDragSource={(isDragSource) =>
                 setDragSource(isDragSource ? COLUMN_KEY_DONE : null)
               }
@@ -171,15 +141,8 @@ function App() {
                 setDragTarget(isDragTarget ? COLUMN_KEY_DONE : null)
               }
               onDrop={handleDrop}
-            >
-              {doneList.map((props) => (
-                <KanbanCard
-                  key={props.title}
-                  onDragStart={() => setDraggedItem(props)}
-                  {...props}
-                />
-              ))}
-            </KanbanColumn>
+              cardList={doneList}
+            ></KanbanColumn>
           </>
         )}
       </KanbanBoard>
